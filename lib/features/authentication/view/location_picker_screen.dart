@@ -36,6 +36,7 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
   LatLng currentPosition;
 
   addMarker(LatLng latLng) async{
+    gMarker.clear();
     gMarker.add(Marker(
       markerId: MarkerId('gMarker'),
       position: latLng,
@@ -149,6 +150,7 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
           children: [
             GoogleMap(
               markers: gMarker,
+              myLocationEnabled: true,
               zoomControlsEnabled: false,
               mapType: MapType.normal,
               compassEnabled: false,
@@ -182,6 +184,28 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                 },
                 title: 'Choose location',
               ),
+            ),
+            Positioned(
+              right: 20,
+              bottom: 100,
+              child: Card(
+                shape: CircleBorder(),
+                child: IconButton(
+                  onPressed: () async{
+
+                    Position pos = await MapRepo.getCurrentLocation();
+
+                    await addMarker(LatLng(pos.latitude, pos.longitude));
+                    await _updateCameraPosition(LatLng(pos.latitude, pos.longitude));
+
+                    setState(() {});
+
+                  },
+                  icon: Icon(
+                    Icons.my_location_rounded
+                  ),
+                ),
+              )
             )
           ],
         ),
